@@ -1,8 +1,8 @@
 // Blink
 
 module top(
-    input logic     clk, 
-    output logic    LED,
+    input  logic  clk, 
+    output logic  LED,
     output logic  RGB_R,
     output logic  RGB_B,
     output logic  RGB_G
