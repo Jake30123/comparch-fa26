@@ -2,7 +2,7 @@
 // Copied from examples
 
 module pwm #(
-    parameter PWM_INTERVAL = 1200,       // CLK frequency is 12MHz, so 1,200 cycles is 100us
+    parameter PWM_INTERVAL = 1200        // CLK frequency is 12MHz, so 1,200 cycles is 100us
 )(
     input logic clk, 
     input logic [$clog2(PWM_INTERVAL) - 1:0] pwm_value, 
