@@ -1,5 +1,5 @@
 module deciderOfFate #(
-    parameter logic [63:0] BOARD_START = '0 // 64 element binary 8x8 matrix expressed as a string of bits
+    parameter INIT_FILE = "" // memh file with the starting board, one 8 bit row per line
 )(
     input logic clk,
     input logic frame_start, // From controller 
@@ -16,16 +16,16 @@ module deciderOfFate #(
     logic [4:0] neighbor_count; // Total number of neighbors 0 to 8 (includes corner cells)
     logic [7:0] neighbors_temp; // Temporary register to cut the critical path in half (90ns -> 45ns ish)
 
-    logic [0:7][0:7] board_status; // Matrix of current LED values
-    logic [0:7][0:7] board_next; // Matrix of upcoming LED values
+    logic [0:7] board_status [0:7]; // Matrix of current LED values, unpacked rows so $readmemh can load it
+    logic [0:7] board_next [0:7]; // Matrix of upcoming LED values, unpacked to match board_status (iverilog can't write packed 2D with variable row index)
 
     logic reset; // Reset flag for writing board_next to board_status 
 
 
     initial begin
-        board_status = BOARD_START; // Assigned in top
+        $readmemh(INIT_FILE, board_status); // File chosen in top
 
-        board_next = '0; // Fill it full of zeros
+        for (int i = 0; i < 8; i++) board_next[i] = '0; // Fill it full of zeros
 
         reset = 1'b0; // Reset not primed
     end
@@ -69,7 +69,9 @@ module deciderOfFate #(
     end
 
     always_ff @(posedge clk) begin // Always two clock cycles behind because of temp register and previous processing block
-        if (frame_start) board_status <= board_next; // If the frame is just starting (set by controller) write the new board status
+        if (frame_start) begin // If the frame is just starting (set by controller) write the new board status
+            for (int i = 0; i < 8; i++) board_status[i] <= board_next[i]; // Row by row since board_status is unpacked
+        end
     end
 
     always_comb begin // Determines pixel_value, the only value returned from this function

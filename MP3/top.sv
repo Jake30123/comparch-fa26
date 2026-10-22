@@ -45,53 +45,20 @@ module top(
         .idle_done      (frame_start)
     );
 
-    localparam logic [63:0] GREEN_START = { // Glider Top Left
-            8'b01000000,
-            8'b00100000,
-            8'b11100000,
-            8'b00000000,
-            8'b00000000,
-            8'b00000000,
-            8'b00000000,
-            8'b00000000
-    };
-
-    localparam logic [63:0] RED_START = { // Glider Top Right
-            8'b00000010,
-            8'b00000100,
-            8'b00000111,
-            8'b00000000,
-            8'b00000000,
-            8'b00000000,
-            8'b00000000,
-            8'b00000000
-    };
-
-    localparam logic [63:0] BLUE_START = { // Square
-            8'b00000000,
-            8'b00000000,
-            8'b00000000,
-            8'b00011000,
-            8'b00011000,
-            8'b00000000,
-            8'b00000000,
-            8'b00000000
-    };
-
     // Instances the decider of the cells fate, one for each color
-    deciderOfFate #(.BOARD_START(GREEN_START)) u3 (
+    deciderOfFate #(.INIT_FILE("green_start.memh")) u3 ( // Glider Top Left
         .clk            (clk),
         .frame_start    (frame_start),
         .pixel          (pixel),
         .pixel_value    (green_data)
     );
-    deciderOfFate #(.BOARD_START(RED_START)) u4 (
+    deciderOfFate #(.INIT_FILE("red_start.memh")) u4 ( // Glider Top Right
         .clk            (clk),
         .frame_start    (frame_start),
         .pixel          (pixel),
         .pixel_value    (red_data)
     );
-    deciderOfFate #(.BOARD_START(BLUE_START)) u5 (
+    deciderOfFate #(.INIT_FILE("blue_start.memh")) u5 ( // Square
         .clk            (clk),
         .frame_start    (frame_start),
         .pixel          (pixel),
